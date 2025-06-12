@@ -98,6 +98,17 @@ pytest --cov=app  # Generate coverage report
 
 Detailed documentation of the testing approach, test cases, and results can be found in the [docs](docs/) directory.
 
+## GitHub Features
+
+This project demonstrates proper use of GitHub for software testing and quality assurance:
+
+- **Issue Templates**: Standardized templates for [bug reports](.github/ISSUE_TEMPLATE/bug_report.md) and [test cases](.github/ISSUE_TEMPLATE/test_case.md)
+- **Continuous Integration**: Automated test runs via [GitHub Actions](.github/workflows/run-tests.yml) on every push
+- **Pull Request Template**: Enforces quality standards for code contributions using our [PR template](.github/pull_request_template.md)
+- **GitHub Pages**: Test documentation published at [project pages site](https://ahmed-alic.github.io/microblog-testing/) (activate in repository settings)
+- **Issues and Project Board**: Track testing progress through categorized and labeled issues
+- **Branch Strategy**: Feature branches for different test categories merged via pull requests
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. Original code © 2017-2024 Miguel Grinberg. Test suite and modifications © 2025 Ahmed Alic.
