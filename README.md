@@ -14,22 +14,31 @@ This repository contains the Microblog Flask application with an enhanced, compr
 
 ### Deployment Information
 
-This application is deployed on Render using the following configuration:
+The application is deployed on Render.com using Docker containerization.
 
-- **Platform**: Render Web Service
-- **Build Command**: `pip install -r requirements.txt`
-- **Start Command**: `gunicorn microblog:app`
-- **Environment Variables**:
-  - `FLASK_APP=microblog.py`
-  - `SECRET_KEY` (auto-generated)
-  - `DATABASE_URL=sqlite:///app.db`
+### Live Application
 
-The deployment process includes:
-1. Automatic deployment from the GitHub repository's main branch
-2. Database migrations using `flask db upgrade`
-3. Translation compilation using `flask translate compile`
+The application is live at [https://microblog-testing.onrender.com](https://microblog-testing.onrender.com)
 
-View the [`render.yaml`](render.yaml) file for deployment configuration details.
+### Deployment Configuration
+
+The deployment uses a Docker-based approach with the following configuration:
+
+1. **Dockerfile**: Uses Python 3.9 and installs necessary build dependencies for C extensions
+2. **Environment Variables**:
+   - `FLASK_APP`: Set to `microblog.py`
+   - `SECRET_KEY`: Randomly generated for security
+   - `DATABASE_URL`: Database connection string (SQLite is used by default)
+
+### Deployment Challenges
+
+Several challenges were encountered during deployment:
+
+1. **Python Version Compatibility**: Python 3.13 (Render's default) has compatibility issues with greenlet and SQLAlchemy
+2. **C Extensions**: Packages like greenlet and psycopg2-binary require specific system dependencies
+3. **Docker Solution**: The final solution uses Docker with Python 3.9 and necessary build tools
+
+This approach successfully resolves the compatibility issues and provides a stable deployment environment.
 
 ## Testing Strategy
 
