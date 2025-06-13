@@ -1,4 +1,4 @@
-FROM python:slim
+FROM python:3.9-slim
 
 # Install required dependencies for building packages
 RUN apt-get update && apt-get install -y \
