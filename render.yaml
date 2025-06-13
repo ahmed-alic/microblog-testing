@@ -4,7 +4,7 @@ services:
     name: microblog
     env: python
     runtime: python3.9  # Try an earlier Python version
-    buildCommand: pip install gunicorn
+    buildCommand: pip install -r requirements-minimal.txt
     startCommand: gunicorn microblog:app
     envVars:
       - key: FLASK_APP
