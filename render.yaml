@@ -3,6 +3,7 @@ services:
   - type: web
     name: microblog
     env: python
+    runtime: python3.11
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn microblog:app
     envVars:
