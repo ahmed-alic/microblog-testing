@@ -24,7 +24,7 @@ RUN pip install --no-cache-dir gunicorn pymysql cryptography
 # Copy application files
 COPY app app
 COPY migrations migrations
-COPY microblog.py config.py boot.sh ./
+COPY microblog.py config.py boot.sh create_db.py ./
 RUN chmod a+x boot.sh
 
 # Set environment variables

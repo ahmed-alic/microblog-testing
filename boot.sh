@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script boots the Docker container with proper database initialization
+# This script boots the Docker container with direct database initialization
 
 # Set up error handling
 set -e
@@ -22,32 +22,27 @@ check_user_table() {
     fi
 }
 
-# Try database migrations with retries
-echo "Running database migrations..."
-max_retries=5
-retry_count=0
-success=false
+# Database initialization strategy
+echo "=== DATABASE INITIALIZATION STRATEGY ==="
 
-while [ $retry_count -lt $max_retries ] && [ "$success" = false ]; do
-    echo "Migration attempt $(($retry_count + 1))/$max_retries"
-    
-    if flask db upgrade; then
-        echo "Migration succeeded!"
-        success=true
-    else
-        retry_count=$(($retry_count + 1))
-        echo "Migration failed, retrying in 2 seconds..."
-        sleep 2
-    fi
-done
+# Step 1: Try the direct SQLAlchemy initialization approach
+echo "1. Initializing database directly with SQLAlchemy..." 
+python create_db.py
 
-# Check if user table exists after migrations
+# Step 2: Check if that worked
 if ! check_user_table; then
-    echo "WARNING: User table doesn't exist after migrations."
-    echo "Creating tables manually with basic schema..."
+    echo "Direct initialization failed, trying flask db upgrade..."
     
-    # Create basic user table if it doesn't exist
-    sqlite3 "$db_file" <<EOF
+    # Step 3: Try using Flask-Migrate as a fallback
+    echo "2. Attempting database migrations..."
+    flask db upgrade
+    
+    # Step 4: Final fallback - create tables with raw SQL
+    if ! check_user_table; then
+        echo "3. Creating minimal tables with raw SQL..."
+        
+        # Create the absolute minimum tables needed for the app to function
+        sqlite3 "$db_file" <<EOF
 CREATE TABLE IF NOT EXISTS user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR(64) UNIQUE,
@@ -59,13 +54,21 @@ CREATE TABLE IF NOT EXISTS user (
     token VARCHAR(32),
     token_expiration TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS post (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    body VARCHAR(140),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INTEGER,
+    language VARCHAR(5),
+    FOREIGN KEY (user_id) REFERENCES user (id)
+);
 EOF
-    
-    echo "Basic user table created."
+    fi
 fi
 
-# Create a demo user if no users exist
-echo "Checking for existing users..."
+# Create a demo user if database exists but no users
+echo "Creating demo user if needed..."
 python << EOF
 from app import create_app, db
 from app.models import User
@@ -74,21 +77,24 @@ import sqlalchemy as sa
 app = create_app()
 with app.app_context():
     try:
-        # Check if User table exists and if there are any users
-        user_count = db.session.scalar(sa.select(sa.func.count()).select_from(User))
-        print(f"Found {user_count} existing users")
+        # Check if we can connect to the database at all
+        db.session.execute(sa.text('SELECT 1'))
+        print("Database connection successful")
         
-        if user_count == 0:
-            print("Creating demo user...")
-            u = User(username='demo', email='demo@example.com')
-            u.set_password('demo1234')
-            db.session.add(u)
-            db.session.commit()
-            print('Created demo user: demo / demo1234')
-        else:
-            print('Using existing user accounts')
+        # Try to create a demo user
+        try:
+            user_exists = db.session.execute(sa.text("SELECT id FROM user WHERE username='demo' LIMIT 1")).scalar() is not None
+            if not user_exists:
+                print("Creating demo user...")
+                db.session.execute(sa.text("INSERT INTO user (username, email, password_hash) VALUES ('demo', 'demo@example.com', 'pbkdf2:sha256:600000$pvYRR36e$c0d92fcc530d244be251d21c76dc444a31ccade3fbddce6bf2aa5ed5fcaa2365')"))
+                db.session.commit()
+                print('Created demo user: demo / demo1234')
+            else:
+                print('Demo user already exists')
+        except Exception as e:
+            print(f"Error creating demo user: {e}")
     except Exception as e:
-        print(f"Error checking users: {e}")
+        print(f"Database connection error: {e}")
 EOF
 
 # Final verification
