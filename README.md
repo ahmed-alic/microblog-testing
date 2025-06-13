@@ -42,12 +42,70 @@ This approach successfully resolves the compatibility issues and provides a stab
 
 ## Testing Strategy
 
-This project implements a multi-layered testing approach:
+This project implements a comprehensive testing approach incorporating industry-standard verification, validation, and testing techniques:
 
 1. **Unit Tests**: Testing individual components in isolation
+   - Located in `tests/unit/`
+   - Focus on models, utilities, and helper functions
+   - Uses pytest fixtures for test isolation
+
 2. **Integration Tests**: Testing interactions between multiple components
+   - Located in `tests/integration/`
+   - Tests API endpoints, authentication flows, and database interactions
+   - Uses Flask test client to simulate HTTP requests
+
 3. **System Tests**: End-to-end testing of complete user flows
-4. **Static Analysis**: Using flake8 to identify potential code quality issues
+   - Located in `tests/system/`
+   - Tests complete user journeys like registration, posting, and following
+   - Validates the application as a cohesive system
+
+4. **Static Analysis**: Code quality and security verification
+   - Located in `tests/static_analysis/`
+   - Uses multiple tools:
+     - Flake8: Python style guide enforcement
+     - Bandit: Security vulnerability detection
+     - Radon: Code complexity analysis
+
+### Test Design Techniques
+
+The test suite employs several test design techniques:
+
+- **Boundary Value Analysis**: Testing at input boundaries (e.g., password length limits)
+- **Equivalence Partitioning**: Testing representative values from input classes
+- **State Transition Testing**: Validating behavior as system changes states
+- **Decision Table Testing**: Testing different input combinations
+
+For detailed information on test design, see [TEST_PLAN.md](TEST_PLAN.md).
+
+### Regression Testing
+
+A robust regression testing strategy ensures that new changes don't break existing functionality. The process includes:
+
+- Automated test runs after code changes
+- CI/CD integration for continuous testing
+- Specific test paths for targeted regression testing
+
+For detailed information on regression testing, see [REGRESSION_TESTING.md](REGRESSION_TESTING.md).
+
+### Test Coverage
+
+The test suite achieves **91% code coverage** across the application, with many modules reaching 100% coverage.
+
+- HTML coverage reports are generated in the `htmlcov` directory
+- Coverage is measured using pytest-cov
+- Areas needing coverage improvement are documented
+
+For detailed coverage analysis, see [COVERAGE_REPORT.md](COVERAGE_REPORT.md).
+
+### Security Analysis
+
+Security testing using Bandit has identified several potential vulnerabilities and recommendations:
+
+- Command injection risks in CLI commands
+- Use of weak cryptographic hash functions
+- Missing timeouts in network requests
+
+For detailed security findings, see [security_report.md](security_report.md).
 
 Key testing features:
 - Test isolation using SQLite in-memory and temporary file databases
