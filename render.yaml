@@ -3,8 +3,8 @@ services:
   - type: web
     name: microblog
     env: python
-    runtime: python3.11
-    buildCommand: pip install -r requirements-render.txt
+    runtime: python3.9  # Try an earlier Python version
+    buildCommand: pip install gunicorn
     startCommand: gunicorn microblog:app
     envVars:
       - key: FLASK_APP
