@@ -18,7 +18,10 @@ COPY migrations migrations
 COPY microblog.py config.py boot.sh ./
 RUN chmod a+x boot.sh
 
-ENV FLASK_APP microblog.py
+# Set environment variables
+ENV FLASK_APP=microblog.py
+ENV MAIL_SERVER=
+ENV MAIL_ADMIN=admin@example.com
 RUN flask translate compile
 
 EXPOSE 5000
