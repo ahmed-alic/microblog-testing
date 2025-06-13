@@ -1,0 +1,16 @@
+services:
+  # A Flask API service
+  - type: web
+    name: microblog
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn microblog:app
+    envVars:
+      - key: FLASK_APP
+        value: microblog.py
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///app.db
+      - key: ELASTICSEARCH_URL
+        value: ""  # Leave empty to disable Elasticsearch in deployment
