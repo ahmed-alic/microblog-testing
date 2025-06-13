@@ -10,7 +10,26 @@ This repository contains the Microblog Flask application with an enhanced, compr
 
 ## Deployed Application
 
-[Live Application URL] - *Coming soon*
+[Live Application URL](https://microblog-testing.onrender.com) 
+
+### Deployment Information
+
+This application is deployed on Render using the following configuration:
+
+- **Platform**: Render Web Service
+- **Build Command**: `pip install -r requirements.txt`
+- **Start Command**: `gunicorn microblog:app`
+- **Environment Variables**:
+  - `FLASK_APP=microblog.py`
+  - `SECRET_KEY` (auto-generated)
+  - `DATABASE_URL=sqlite:///app.db`
+
+The deployment process includes:
+1. Automatic deployment from the GitHub repository's main branch
+2. Database migrations using `flask db upgrade`
+3. Translation compilation using `flask translate compile`
+
+View the [`render.yaml`](render.yaml) file for deployment configuration details.
 
 ## Testing Strategy
 
