@@ -215,12 +215,12 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
         return task
 
     def get_tasks_in_progress(self):
-        query = self.tasks.select().where(Task.complete == False)
+        query = self.tasks.select().where(Task.complete is False)
         return db.session.scalars(query)
 
     def get_task_in_progress(self, name):
         query = self.tasks.select().where(Task.name == name,
-                                          Task.complete == False)
+                                          Task.complete is False)
         return db.session.scalar(query)
 
     def posts_count(self):
