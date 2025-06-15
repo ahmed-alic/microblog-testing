@@ -8,6 +8,21 @@ This project is based on Miguel Grinberg's [Microblog Flask application](https:/
 
 This repository contains the Microblog Flask application with an enhanced, comprehensive test suite developed as part of a Software Verification, Validation, and Testing course project. The test suite demonstrates various testing techniques and achieves 91% code coverage across the application.
 
+### Application Features
+
+The Microblog application is a Twitter-like social platform with the following key features:
+
+* **User Authentication**: Registration, login, password reset functionality
+* **User Profiles**: Customizable profiles with avatars and about-me sections
+* **Posts**: Users can create, view, and browse text posts
+* **Social Network**: Follow/unfollow users, personalized timelines
+* **Private Messaging**: Direct messaging between users
+* **Notifications**: Real-time notification system for messages
+* **Search**: Full-text search functionality
+* **API**: RESTful API for programmatic access
+* **Internationalization**: Multi-language support
+* **Export**: Data export capabilities
+
 ## Deployed Application
 
 [Live Application URL](https://microblog-testing.onrender.com) 
@@ -20,6 +35,10 @@ The application is deployed on Render.com using Docker containerization.
 
 The application is live at [https://microblog-testing.onrender.com](https://microblog-testing.onrender.com)
 
+Defaulted login credentials:
+* Username: `demo`
+* Password: `demo1234`
+
 ### Deployment Configuration
 
 The deployment uses a Docker-based approach with the following configuration:
@@ -29,6 +48,10 @@ The deployment uses a Docker-based approach with the following configuration:
    - `FLASK_APP`: Set to `microblog.py`
    - `SECRET_KEY`: Randomly generated for security
    - `DATABASE_URL`: Database connection string (SQLite is used by default)
+3. **Persistent Storage**:
+   - Docker volume mounted at `/data` for database persistence
+   - SQLite database stored at `/data/app.db`
+   - Note: On free tier services, data may not persist during extended inactive periods
 
 ### Deployment Challenges
 
@@ -75,7 +98,7 @@ The test suite employs several test design techniques:
 - **State Transition Testing**: Validating behavior as system changes states
 - **Decision Table Testing**: Testing different input combinations
 
-For detailed information on test design, see [TEST_PLAN.md](TEST_PLAN.md).
+Detailed test design information is available in the project report document.
 
 ### Regression Testing
 
@@ -85,7 +108,7 @@ A robust regression testing strategy ensures that new changes don't break existi
 - CI/CD integration for continuous testing
 - Specific test paths for targeted regression testing
 
-For detailed information on regression testing, see [REGRESSION_TESTING.md](REGRESSION_TESTING.md).
+Regression tests are consolidated in `tests/test_core_regression.py` for comprehensive verification.
 
 ### Test Coverage
 
@@ -93,9 +116,7 @@ The test suite achieves **91% code coverage** across the application, with many 
 
 - HTML coverage reports are generated in the `htmlcov` directory
 - Coverage is measured using pytest-cov
-- Areas needing coverage improvement are documented
-
-For detailed coverage analysis, see [COVERAGE_REPORT.md](COVERAGE_REPORT.md).
+- Areas needing coverage improvement are documented in the project report
 
 ### Security Analysis
 
@@ -105,7 +126,7 @@ Security testing using Bandit has identified several potential vulnerabilities a
 - Use of weak cryptographic hash functions
 - Missing timeouts in network requests
 
-For detailed security findings, see [security_report.md](security_report.md).
+These findings are addressed in the project's comprehensive test documentation.
 
 Key testing features:
 - Test isolation using SQLite in-memory and temporary file databases
@@ -122,6 +143,7 @@ Highlights:
 - 100% coverage of tasks.py, email.py, search.py, translate.py, and more
 - Robust system tests for critical user flows (authentication, following, posts)
 - Error handling and edge cases thoroughly tested
+- Tests are categorized into unit, integration, system, and static analysis types
 
 ## Installation and Setup
 
@@ -175,14 +197,48 @@ Visit `http://localhost:5000` in your web browser.
 ## Running Tests
 
 ```
-pytest        # Run all tests
-pytest -v     # Verbose output
-pytest --cov=app  # Generate coverage report
+# Run all tests
+pytest
+
+# Run with verbose output
+pytest -v
+
+# Generate coverage report
+pytest --cov=app
+
+# Run specific test categories
+.\venv\Scripts\python -m pytest tests\unit -v
+.\venv\Scripts\python -m pytest tests\integration -v
+.\venv\Scripts\python -m pytest tests\system -v
+.\venv\Scripts\python -m pytest tests\static_analysis -v
 ```
+
+### Test Database Configuration
+
+Tests use isolated databases to prevent interference with production data:
+- Unit tests: SQLite in-memory database (`sqlite:///:memory:`) 
+- Integration tests: Temporary file-based SQLite database
+- System tests: Temporary file-based SQLite database
 
 ## Test Documentation
 
-Detailed documentation of the testing approach, test cases, and results can be found in the [docs](docs/) directory.
+Detailed documentation of the testing approach, test cases, and results can be found in the comprehensive PROJECT_REPORT_WITH_APPENDIX.md file.
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Database Persistence on Render Free Tier**:
+   - Free tier services may lose data after inactivity periods
+   - Solution: Upgrade to paid tier or use external database service
+
+2. **SQLAlchemy Errors with Python 3.13**:
+   - Some SQLAlchemy versions have compatibility issues with Python 3.13
+   - Solution: Use Python 3.9 as specified in the Dockerfile
+
+3. **Missing Flake8**:
+   - Static analysis tests may fail if flake8 is not installed
+   - Solution: `pip install -r requirements-test.txt`
 
 ## GitHub Features
 
